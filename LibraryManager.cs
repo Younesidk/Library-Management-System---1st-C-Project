@@ -3,12 +3,54 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using System.Text.Json;
 
 namespace Library_Management_System___1st_C__Project
 {
     public class LibraryManager
     {
         private List<Book> Books = new List<Book>();
+        private const string path = "books.json";
+
+        public void SaveBooksToJsonFile()
+        {
+            string JsonFile = JsonSerializer.Serialize(Books, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(path, JsonFile);
+
+            Console.WriteLine("Saving is Done !");
+        }
+
+        
+
+        public void LoaBooksFromJsonFile()
+        {
+            if (File.Exists(path))
+            {
+                string jsonFromFile = File.ReadAllText(path);
+
+                if (!string.IsNullOrWhiteSpace(jsonFromFile))
+                {
+                    try
+                    {
+                        var loaded = JsonSerializer.Deserialize<List<Book>>(jsonFromFile);
+                        if (loaded != null)
+                        {
+                            Books = loaded;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Failed to load Members. Json might be invalid.");
+                        Console.WriteLine("Error : " + ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("File not found");
+            }
+        }
 
         public void AddBook(string Title, string Author, int Pages)
         {

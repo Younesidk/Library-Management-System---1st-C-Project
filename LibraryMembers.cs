@@ -3,18 +3,59 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using System.Text.Json;
 
 namespace Library_Management_System___1st_C__Project
 {
     public class LibraryMembers
     {
         private List<Member> LibMembers = new List<Member>();
+        private const string path = "members.json";
 
-        public void AddMember(string Name,string Type)
+        public void SaveMembersToJsonFile()
+        {
+            string jsonString = JsonSerializer.Serialize(LibMembers, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(path, jsonString);
+
+            Console.WriteLine("Save is Done !");
+        }
+
+        public void LoadMembersFromJSONFile()
+        {
+            if (File.Exists(path))
+            {
+                string jsonFromFile = File.ReadAllText(path);
+
+                if (!string.IsNullOrWhiteSpace(jsonFromFile))
+                {
+                    try
+                    {
+                        var loaded = JsonSerializer.Deserialize<List<Member>>(jsonFromFile);
+                        if (loaded != null)
+                        {
+                            LibMembers = loaded;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Failed to load Members. Json might be invalid.");
+                        Console.WriteLine("Error : " + ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("File not found");
+            }
+        }
+
+
+        public void AddMember(string Name,string Type,int id)
         {
             try
             {
-                LibMembers.Add(new Member(Name, Type));
+                LibMembers.Add(new Member(Name, Type,id));
             }
             catch (ArgumentNullException Ar)
             {
@@ -79,7 +120,8 @@ namespace Library_Management_System___1st_C__Project
 
             MemberBookBorrow.BorrowedBooks.Add(BorrowedBook);
             BorrowedBook.IsBorrowed = true;
-            BorrowedBook.MemberBorrowed = MemberBookBorrow;
+            BorrowedBook.BorrowedByMemberID = MemberBookBorrow.ID;
+            BorrowedBook.BorrowedByMember = MemberBookBorrow;
         }
 
         public void ReturnBook(LibraryManager Library, string MemberName, string Title, string Author)
@@ -107,7 +149,8 @@ namespace Library_Management_System___1st_C__Project
 
             MemberBookBorrow.BorrowedBooks.Remove(BorrowedBook);
             BorrowedBook.IsBorrowed = false;
-            BorrowedBook.MemberBorrowed = null;
+            BorrowedBook.BorrowedByMemberID = null;
+            BorrowedBook.BorrowedByMember = MemberBookBorrow;
         }
 
         public bool IsMemberAvailable(string Name)
@@ -124,5 +167,8 @@ namespace Library_Management_System___1st_C__Project
                 return false;
             return true;
         }
+
+        public string MemberByID(int id) => LibMembers.Find(m => m.ID == id).Name;
+        
     }
 }

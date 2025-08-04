@@ -50,9 +50,12 @@ namespace Library_Management_System___1st_C__Project
                     pages = value;
             }
         }
+        
 
-        public bool IsBorrowed = false;
-        public Member? MemberBorrowed;
+        public bool IsBorrowed { get; set; } = false;
+
+        public Member? BorrowedByMember;
+        public int? BorrowedByMemberID { get; set; } = null;
 
         public Book(string title, string author, int pages)
         {
@@ -67,9 +70,9 @@ namespace Library_Management_System___1st_C__Project
 
         public override string ToString()
         {
-            if(MemberBorrowed == null)
+            if(BorrowedByMember == null)
                 return $"{title} By {Author} , {pages} Pages - Not borrowed (Available)";
-            return $"{Title} By {Author} , {Pages} Pages - Borrowed by {MemberBorrowed.Name}";
+            return $"{Title} By {Author} , {Pages} Pages - Borrowed by {BorrowedByMember.Name}";
         }
     }
 }

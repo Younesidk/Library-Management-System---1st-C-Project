@@ -1,16 +1,27 @@
-﻿namespace Library_Management_System___1st_C__Project
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+
+namespace Library_Management_System___1st_C__Project
 {
     class Program
     {
         static void Main()
         {
+            const int MaxChoice = 8, MinChoice = 0;
+
             LibraryManager Library = new LibraryManager();
             LibraryMembers Members = new LibraryMembers();
+
+            Members.LoadMembersFromJSONFile();
+            Library.LoaBooksFromJsonFile();
+
             while (true)
             {
                 Menu();
                 int Choice = 0;
-                while (!int.TryParse(Console.ReadLine(), out Choice) || Choice < 0 || Choice > 8)
+                while (!int.TryParse(Console.ReadLine(), out Choice) || Choice < MinChoice || Choice > MaxChoice)
                 {
                     Console.WriteLine("please respect the input");
                 }
@@ -25,7 +36,14 @@
                             string Name = Console.ReadLine();
                             string Type = Console.ReadLine();
 
-                            Members.AddMember(Name, Type);
+                            Console.WriteLine("Enter the ID of the Member");
+
+                            int id = 0;
+                            while(!int.TryParse(Console.ReadLine(),out id))
+                                Console.WriteLine("Please Enter a number");
+
+
+                            Members.AddMember(Name, Type, id);
                             break;
                         }
                     case 2:
@@ -113,6 +131,9 @@
                         }
                     case 0:
                         {
+                            Members.SaveMembersToJsonFile();
+                            Library.SaveBooksToJsonFile();
+
                             Console.WriteLine("See you Soon !");
                             return;
                         }

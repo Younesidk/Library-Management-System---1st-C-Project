@@ -34,19 +34,22 @@ namespace Library_Management_System___1st_C__Project
             }
         }
 
-        public List<Book> BorrowedBooks = new List<Book>();
+        public int ID { get; set; }
 
-        public Member(string Name,string Type)
+        public List<Book> BorrowedBooks { get; set; } = new List<Book>();
+
+        public Member(string Name,string Type,int id)
         {
             this.Name = Name;
             this.Type = Type;
+            ID = id;
         }
 
         public override string ToString()
         {
             if(BorrowedBooks.Count != 0)
-                return $"Member : {Name} , is a {Type} , borrowed books : {string.Join(" - ",BorrowedBooks)}";
-            return $"Member : {Name} , is a {Type}";
+                return $"ID : {ID} , Member : {Name} , is a {Type} , borrowed books : {string.Join(" - ",BorrowedBooks)}";
+            return $"ID : {ID} , Member : {Name} , is a {Type}";
         }
     }
 }
